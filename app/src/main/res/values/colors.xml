@@ -5,6 +5,12 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#111827</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue_500">#0099FF</color>
+    <color name="blue_700">#0077FF</color>
+    <color name="blue_300">#00BBFF</color>
+    <color name="indigo_400">#818cf8</color>
+    <color name="indigo_500">#6366f1</color>
+    <color name="indigo_700">#4338ca</color>
 </resources>
