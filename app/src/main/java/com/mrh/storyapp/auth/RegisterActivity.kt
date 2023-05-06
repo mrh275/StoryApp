@@ -50,9 +50,10 @@ class RegisterActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ResponseRegister>, response: Response<ResponseRegister>) {
                 if(response.isSuccessful) {
                     showLoading(false)
-                    Toast.makeText(this@RegisterActivity, "Welcome $name", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                    Toast.makeText(this@RegisterActivity, "Akun $name berhasil didaftarkan", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                     startActivity(intent)
+                    finish()
                 } else {
                     showLoading(false)
                     Log.e(TAG, "onFailure: ${response.message()}")
