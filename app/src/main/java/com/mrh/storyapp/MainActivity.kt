@@ -3,7 +3,6 @@ package com.mrh.storyapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.mrh.storyapp.auth.LoginActivity
 import com.mrh.storyapp.data.UserModel
 import com.mrh.storyapp.data.UserPreference
@@ -37,18 +36,4 @@ class MainActivity : AppCompatActivity() {
         binding.userId.text = userModel.userId
         binding.userName.text = userModel.name
     }
-
-    private fun checkAuthSession() {
-        userModel = mUserPreference.getAuthSession()
-
-        if(userModel.token.isNullOrEmpty() && userModel.userId.isNullOrEmpty()) {
-            //Do nothing
-        } else {
-            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
-
-
 }

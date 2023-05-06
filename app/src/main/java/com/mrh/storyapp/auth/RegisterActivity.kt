@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.mrh.storyapp.MainActivity
 import com.mrh.storyapp.api.ApiConfig
 import com.mrh.storyapp.api.ResponseRegister
 import com.mrh.storyapp.databinding.ActivityRegisterBinding

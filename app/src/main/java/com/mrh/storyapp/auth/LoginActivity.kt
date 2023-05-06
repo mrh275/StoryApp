@@ -35,8 +35,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         userModel = UserModel()
 
-        checkAuthSession()
-
         binding.btnLogin.setOnClickListener {
             email = binding.edLoginEmail.text.toString()
             password = binding.edLoginPassword.text.toString()
@@ -90,18 +88,5 @@ class LoginActivity : AppCompatActivity() {
         userModel.name = name
 
         userPreference.setAuthSession(userModel)
-    }
-
-    private fun checkAuthSession() {
-        val userPreference = UserPreference(this)
-        userModel = userPreference.getAuthSession()
-
-        if(userModel.token.isNullOrEmpty() && userModel.userId.isNullOrEmpty()) {
-            //Do nothing
-        } else {
-            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
     }
 }
