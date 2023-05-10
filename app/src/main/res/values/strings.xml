@@ -7,4 +7,7 @@
     <string name="nama">Nama</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="story_owner">Owner</string>
+    <string name="created_at">Created At</string>
+    <string name="detail_story_name">Detail Story Name</string>
+    <string name="story_description">Story Description</string>
 </resources>
