@@ -1,5 +1,6 @@
 package com.mrh.storyapp.api
 
+import com.mrh.storyapp.data.stories.ResponseDetailStory
 import com.mrh.storyapp.data.stories.ResponseStories
 import retrofit2.Call
 import  retrofit2.http.*
@@ -20,7 +21,12 @@ interface ApiService {
         @Field("password") password: String
     ): Call<ResponseRegister>
 
-    @Headers("Authorization: token 12345")
+
     @GET("stories")
     fun getAllStories() : Call<ResponseStories>
+
+    @GET("stories/{id}")
+    fun getDetailStory(
+        @Path("id") id :String
+    ): Call<ResponseDetailStory>
 }
