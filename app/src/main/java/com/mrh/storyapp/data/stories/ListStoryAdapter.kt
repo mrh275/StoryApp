@@ -1,28 +1,66 @@
 package com.mrh.storyapp.data.stories
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
+import com.mrh.storyapp.MainActivity
 import com.mrh.storyapp.R
+import com.mrh.storyapp.ui.DetailStoryActivity
 
-class ListStoryAdapter(private val listStory: List<String>) : RecyclerView.Adapter<ListStoryAdapter.ListViewHolder>() {
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListViewHolder {
-        val view: View = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_row_stories, viewGroup, false)
+class ListStoryAdapter(private val activity: Activity) : RecyclerView.Adapter<ListStoryAdapter.ListViewHolder>() {
+
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+    class ListViewHolder(view: View) : ViewHolder(view) {
+        val owner: TextView = view.findViewById(R.id.tv_story_owner)
+        val imageUrl: ImageView = view.findViewById(R.id.img_stories)
+        val createdAt: TextView = view.findViewById(R.id.tv_created_at)
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(listStoryItem: ListStoryItem)
+
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ListViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_row_stories, parent, false)
         return ListViewHolder(view)
     }
 
-    override fun getItemCount() = listStory.size
+    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+        holder.owner.text = liststory?.get(position)?.name
+        holder.createdAt.text = liststory?.get(position)?.createdAt
+        Glide.with(holder.imageUrl)
+            .load(liststory?.get(position)?.photoUrl)
+            .into(holder.imageUrl)
 
-    override fun onBindViewHolder(viewHolder: ListViewHolder, position: Int) {
-        viewHolder.owner.text = listStory[position]
+        holder.itemView.setOnClickListener {
+            onItemClickCallback.onItemClicked(liststory?.get(holder.adapterPosition)!!)
+        }
     }
 
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val owner: TextView = itemView.findViewById(R.id.tv_story_owner)
-        val imageUrl: ImageView = itemView.findViewById(R.id.img_stories)
+    override fun getItemCount(): Int {
+        return if(liststory == null) 0
+        else liststory?.size!!
+    }
+
+    private var liststory: List<ListStoryItem>? = null
+
+    fun setListStory(listStory: List<ListStoryItem>?) {
+        liststory = listStory
     }
 }
