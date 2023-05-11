@@ -32,7 +32,7 @@
             android:layout_marginTop="16dp"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="?android:textColorPrimary"
             app:layout_constraintTop_toBottomOf="@+id/iv_detail_photo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -44,7 +44,7 @@
             android:text="@string/story_description"
             android:layout_marginTop="16dp"
             android:textSize="14sp"
-            android:textColor="@color/black"
+            android:textColor="?android:textColorPrimary"
             app:layout_constraintTop_toBottomOf="@+id/tv_detail_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
