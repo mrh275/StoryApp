@@ -1,5 +1,6 @@
 package com.mrh.storyapp
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -51,7 +52,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
             }
         }
-        storyViewModel.findStories()
+        val userToken = mUserPreference.getAuthSession().token
+        storyViewModel.findStories(userToken.toString())
 
         adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
             override fun onItemClicked(listStoryItem: ListStoryItem) {

@@ -1,11 +1,14 @@
 package com.mrh.storyapp.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.mrh.storyapp.data.UserPreference
 import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityDetailStoryBinding
 
@@ -20,11 +23,15 @@ class DetailStoryActivity : AppCompatActivity() {
 
         private lateinit var binding: ActivityDetailStoryBinding
         private lateinit var viewModel: StoryViewModel
+        private lateinit var userPreference: UserPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        userPreference = UserPreference(this)
+
+        playAnimation()
 
         val id = intent.getStringExtra(EXTRA_ID)
         val bundle = Bundle()
@@ -34,8 +41,9 @@ class DetailStoryActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
 
+        val userToken = userPreference.getAuthSession().token
         if(id != null) {
-            viewModel.setDetailStory(id)
+            viewModel.setDetailStory(id, userToken.toString())
         }
         showLoading(true)
         viewModel.getDetailStoryObserve().observe(this) {
@@ -50,6 +58,17 @@ class DetailStoryActivity : AppCompatActivity() {
                 }
                 supportActionBar?.title = it.story.name
             }
+        }
+    }
+
+    private fun playAnimation() {
+        val imageStory = ObjectAnimator.ofFloat(binding.ivDetailPhoto, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
+        val ownerStory = ObjectAnimator.ofFloat(binding.tvDetailName, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
+        val descStory = ObjectAnimator.ofFloat(binding.tvDetailDescription, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
+
+        AnimatorSet().apply {
+            playSequentially(imageStory, ownerStory, descStory)
+            start()
         }
     }
 
