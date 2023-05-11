@@ -10,7 +10,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class StoryViewModel : ViewModel() {
+class StoryViewModel() : ViewModel() {
 
     private var listStory: MutableLiveData<List<ListStoryItem>> = MutableLiveData()
     private var detailStory: MutableLiveData<ResponseDetailStory> = MutableLiveData()
@@ -31,9 +31,9 @@ class StoryViewModel : ViewModel() {
     fun getUploadResult(): MutableLiveData<FileUploadResponse> {
         return uploadResponse
     }
-    fun findStories() {
+    fun findStories(token: String) {
         val client =
-            ApiConfig.getApiWithToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLUloTTdWM0tXU0VWc29mNW0iLCJpYXQiOjE2ODM0NDQ4MTl9.-iOOHW5gpujl7p-O5_gFSc30-EurMzcDTk9MwDQCmxs")
+            ApiConfig.getApiWithToken(token)
                 .getAllStories()
         client.enqueue(object : Callback<ResponseStories> {
             override fun onResponse(
@@ -54,9 +54,9 @@ class StoryViewModel : ViewModel() {
         })
     }
 
-    fun setDetailStory(id: String) {
+    fun setDetailStory(id: String, token: String) {
         val client =
-            ApiConfig.getApiWithToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLUloTTdWM0tXU0VWc29mNW0iLCJpYXQiOjE2ODM0NDQ4MTl9.-iOOHW5gpujl7p-O5_gFSc30-EurMzcDTk9MwDQCmxs")
+            ApiConfig.getApiWithToken(token)
                 .getDetailStory(id)
         client.enqueue(object : Callback<ResponseDetailStory> {
             override fun onResponse(
@@ -75,9 +75,9 @@ class StoryViewModel : ViewModel() {
         })
     }
 
-    fun addNewStory(imageMultiPart: MultipartBody.Part, description: RequestBody) {
+    fun addNewStory(imageMultiPart: MultipartBody.Part, description: RequestBody, token: String) {
         val client =
-            ApiConfig.getApiWithToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLUloTTdWM0tXU0VWc29mNW0iLCJpYXQiOjE2ODM0NDQ4MTl9.-iOOHW5gpujl7p-O5_gFSc30-EurMzcDTk9MwDQCmxs")
+            ApiConfig.getApiWithToken(token)
                 .addStory(imageMultiPart, description)
         client.enqueue(object : Callback<FileUploadResponse> {
             override fun onResponse(
