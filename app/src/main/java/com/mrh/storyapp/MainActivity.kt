@@ -16,6 +16,7 @@ import com.mrh.storyapp.data.stories.ListStoryAdapter
 import com.mrh.storyapp.data.stories.ListStoryItem
 import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityMainBinding
+import com.mrh.storyapp.ui.AddStoryActivity
 import com.mrh.storyapp.ui.DetailStoryActivity
 
 class MainActivity : AppCompatActivity() {
@@ -62,8 +63,12 @@ class MainActivity : AppCompatActivity() {
                     startActivity(it)
                 }
             }
-
         })
+
+        binding.btnAddStory.setOnClickListener {
+            val intent = Intent(this@MainActivity, AddStoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onBackPressed() {
