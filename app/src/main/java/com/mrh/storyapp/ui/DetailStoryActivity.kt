@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.mrh.storyapp.R
 import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityDetailStoryBinding
 

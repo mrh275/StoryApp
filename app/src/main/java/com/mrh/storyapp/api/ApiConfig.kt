@@ -2,7 +2,6 @@ package com.mrh.storyapp.api
 
 import com.mrh.storyapp.BuildConfig
 import com.mrh.storyapp.auth.OAuthInterceptor
-import com.mrh.storyapp.data.UserPreference
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

@@ -1,8 +1,6 @@
 package com.mrh.storyapp.data.stories
 
 import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.mrh.storyapp.MainActivity
 import com.mrh.storyapp.R
-import com.mrh.storyapp.ui.DetailStoryActivity
 
 class ListStoryAdapter(private val activity: Activity) : RecyclerView.Adapter<ListStoryAdapter.ListViewHolder>() {
 
