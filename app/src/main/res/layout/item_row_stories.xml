@@ -18,7 +18,7 @@
         android:padding="8dp">
 
         <ImageView
-            android:id="@+id/img_stories"
+            android:id="@+id/iv_item_photo"
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:scaleType="centerCrop"
@@ -28,7 +28,7 @@
             tools:src="@tools:sample/avatars"/>
 
         <TextView
-            android:id="@+id/tv_story_owner"
+            android:id="@+id/tv_item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -37,7 +37,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="@string/story_owner"
-            app:layout_constraintTop_toBottomOf="@+id/img_stories"
+            app:layout_constraintTop_toBottomOf="@+id/iv_item_photo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -50,7 +50,7 @@
             android:layout_marginTop="8dp"
             android:textSize="16sp"
             tools:text="@string/created_at"
-            app:layout_constraintTop_toBottomOf="@+id/tv_story_owner"
+            app:layout_constraintTop_toBottomOf="@+id/tv_item_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
