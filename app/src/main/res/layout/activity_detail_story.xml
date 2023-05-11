@@ -15,6 +15,7 @@
 
         <ImageView
             android:id="@+id/iv_detail_photo"
+            android:translationX="1000dp"
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:scaleType="centerCrop"
@@ -25,6 +26,7 @@
 
         <TextView
             android:id="@+id/tv_detail_name"
+            android:translationX="1000dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/detail_story_name"
@@ -39,6 +41,7 @@
 
         <TextView
             android:id="@+id/tv_detail_description"
+            android:translationX="1000dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/story_description"
