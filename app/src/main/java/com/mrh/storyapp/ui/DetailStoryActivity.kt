@@ -43,11 +43,11 @@ class DetailStoryActivity : AppCompatActivity() {
             showLoading(false)
             if(it != null) {
                 binding.apply {
-                    tvDetailStoryName.text = it.story.name
+                    tvDetailName.text = it.story.name
                     tvDetailDescription.text = it.story.description
-                    Glide.with(imgDetailStory)
+                    Glide.with(ivDetailPhoto)
                         .load(it.story.photoUrl)
-                        .into(imgDetailStory)
+                        .into(ivDetailPhoto)
                 }
                 supportActionBar?.title = it.story.name
             }
