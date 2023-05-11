@@ -3,7 +3,10 @@ package com.mrh.storyapp.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import com.mrh.storyapp.MainActivity
@@ -25,15 +28,34 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var userId: String
     private lateinit var name: String
     private lateinit var userModel: UserModel
+    private var backPressedTime: Long = 0
 
     companion object {
         private const val TAG = "LoginActivity"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         userModel = UserModel()
+
+        binding.edLoginEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s.isNullOrEmpty()) {
+                    binding.edLoginEmail.error = "Email tidak boleh kosong"
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                    binding.edLoginEmail.error = "Email tidak valid"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+        })
 
         binding.btnLogin.setOnClickListener {
             email = binding.edLoginEmail.text.toString()
@@ -45,6 +67,16 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    override fun onBackPressed() {
+        if(backPressedTime + 3000 > System.currentTimeMillis()) {
+            super.onBackPressed()
+            finishAffinity()
+        } else {
+            Toast.makeText(this@LoginActivity, "Press back again to leave the app", Toast.LENGTH_SHORT).show()
+        }
+        backPressedTime = System.currentTimeMillis()
     }
 
     private fun authLogin(email: String, password: String) {
