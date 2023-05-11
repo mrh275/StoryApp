@@ -4,8 +4,10 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
@@ -22,6 +24,7 @@ class ListStoryAdapter(private val activity: Activity) : RecyclerView.Adapter<Li
         val owner: TextView = view.findViewById(R.id.tv_item_name)
         val imageUrl: ImageView = view.findViewById(R.id.iv_item_photo)
         val createdAt: TextView = view.findViewById(R.id.tv_created_at)
+        val cvStory: CardView = view.findViewById(R.id.cv_stories)
     }
 
     interface OnItemClickCallback {
@@ -44,6 +47,7 @@ class ListStoryAdapter(private val activity: Activity) : RecyclerView.Adapter<Li
             .load(liststory?.get(position)?.photoUrl)
             .into(holder.imageUrl)
 
+        holder.cvStory.startAnimation(AnimationUtils.loadAnimation(holder.cvStory.context, R.anim.grow_appear))
         holder.itemView.setOnClickListener {
             onItemClickCallback.onItemClicked(liststory?.get(holder.adapterPosition)!!)
         }
