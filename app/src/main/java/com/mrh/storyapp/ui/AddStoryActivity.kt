@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.mrh.storyapp.MainActivity
+import com.mrh.storyapp.data.UserPreference
 import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityAddStoryBinding
 import com.mrh.storyapp.utils.Utils
@@ -38,6 +39,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var utils: Utils
     private var getFile: File? = null
     private val storyViewModel by viewModels<StoryViewModel>()
+    private lateinit var userPreference: UserPreference
 
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -78,6 +80,7 @@ class AddStoryActivity : AppCompatActivity() {
         utils = Utils()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Add New Story"
+        userPreference = UserPreference(this)
 
         if(!allPermissionGranted()) {
             ActivityCompat.requestPermissions(
@@ -172,7 +175,8 @@ class AddStoryActivity : AppCompatActivity() {
                 file.name,
                 requestImageFile
             )
-            storyViewModel.addNewStory(imageMultiPart, description)
+            val userToken = userPreference.getAuthSession().token
+            storyViewModel.addNewStory(imageMultiPart, description, userToken.toString())
             storyViewModel.getUploadResult().observe(this) {
                 if (!it.error) {
                     showLoading(false)
