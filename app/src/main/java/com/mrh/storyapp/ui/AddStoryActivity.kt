@@ -1,36 +1,45 @@
 package com.mrh.storyapp.ui
 
 import android.Manifest
-import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.mrh.storyapp.MainActivity
-import com.mrh.storyapp.R
+import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityAddStoryBinding
 import com.mrh.storyapp.utils.Utils
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
     private lateinit var currentPhotoPath: String
     private lateinit var utils: Utils
+    private var getFile: File? = null
+    private val storyViewModel by viewModels<StoryViewModel>()
 
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -38,7 +47,8 @@ class AddStoryActivity : AppCompatActivity() {
         if(it.resultCode == RESULT_OK) {
             val myFile = File(currentPhotoPath)
             myFile.let { file ->
-                utils.rotateFile(file)
+                utils.rotateFile(file, true)
+                getFile = file
                 binding.previewImg.setImageBitmap(BitmapFactory.decodeFile(file.path))
             }
         }
@@ -51,6 +61,7 @@ class AddStoryActivity : AppCompatActivity() {
             val selectedImg = result.data?.data as Uri
             selectedImg.let { uri ->
                 val myFile = utils.uriToFile(uri, this@AddStoryActivity)
+                getFile = myFile
                 binding.previewImg.setImageURI(uri)
             }
         }
@@ -59,6 +70,7 @@ class AddStoryActivity : AppCompatActivity() {
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+        private const val MAXIMAL_SIZE = 1000000
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +92,9 @@ class AddStoryActivity : AppCompatActivity() {
         }
         binding.btnGallery.setOnClickListener{
             startGallery()
+        }
+        binding.buttonAdd.setOnClickListener {
+            uploadImage()
         }
     }
 
@@ -138,5 +153,55 @@ class AddStoryActivity : AppCompatActivity() {
         intent.type = "image/*"
         val chooser = Intent.createChooser(intent, "Choose a Picture")
         launcherIntentGallery.launch(chooser)
+    }
+
+    private fun uploadImage() {
+        showLoading(true)
+        if(getFile != null) {
+            val file = reduceFileImage(getFile as File)
+
+            val description = binding.edAddDescription.text.toString()
+                .toRequestBody("text/plain".toMediaTypeOrNull())
+            val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+            val imageMultiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "photo",
+                file.name,
+                requestImageFile
+            )
+            storyViewModel.addNewStory(imageMultiPart, description)
+            storyViewModel.getUploadResult().observe(this) {
+                if(!it.error) {
+                    showLoading(false)
+                    Toast.makeText(this@AddStoryActivity, "Berhasil menambahkan story", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    showLoading(false)
+                    Toast.makeText(this@AddStoryActivity, "Gagal menambahkan story", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            showLoading(false)
+            Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun reduceFileImage(file: File): File {
+        val bitmap = BitmapFactory.decodeFile(file.path)
+        var compressQuality = 100
+        var streamLength: Int
+        do {
+            val bmpStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+            val bmpPicByteArray = bmpStream.toByteArray()
+            streamLength = bmpPicByteArray.size
+            compressQuality -= 5
+        } while (streamLength > MAXIMAL_SIZE)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+        return file
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
     }
 }
