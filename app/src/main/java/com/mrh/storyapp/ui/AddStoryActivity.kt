@@ -157,7 +157,13 @@ class AddStoryActivity : AppCompatActivity() {
 
     private fun uploadImage() {
         showLoading(true)
-        if(getFile != null) {
+        if(getFile == null) {
+            showLoading(false)
+            Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
+        } else if(binding.edAddDescription.text.isNullOrEmpty()){
+            showLoading(false)
+            Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
+        } else {
             val file = reduceFileImage(getFile as File)
 
             val description = binding.edAddDescription.text.toString()
@@ -170,19 +176,20 @@ class AddStoryActivity : AppCompatActivity() {
             )
             storyViewModel.addNewStory(imageMultiPart, description)
             storyViewModel.getUploadResult().observe(this) {
-                if(!it.error) {
+                if (!it.error) {
                     showLoading(false)
-                    Toast.makeText(this@AddStoryActivity, "Berhasil menambahkan story", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@AddStoryActivity,
+                        "Berhasil menambahkan story",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
                     startActivity(intent)
                 } else {
                     showLoading(false)
-                    Toast.makeText(this@AddStoryActivity, "Gagal menambahkan story", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
                 }
             }
-        } else {
-            showLoading(false)
-            Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
         }
     }
 
