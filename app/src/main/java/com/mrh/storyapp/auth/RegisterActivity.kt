@@ -3,7 +3,10 @@ package com.mrh.storyapp.auth
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import com.mrh.storyapp.api.ApiConfig
@@ -28,6 +31,38 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.edRegisterName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s.isNullOrEmpty()) {
+                    binding.edRegisterName.error = "Nama tidak boleh kosong"
+                } else if(s.length < 3) {
+                    binding.edRegisterName.error = "Nama minimal 3 karakter"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+
+        binding.edRegisterEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s.isNullOrEmpty()) {
+                    binding.edRegisterEmail.error = "Email tidak boleh kosong"
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                    binding.edRegisterEmail.error = "Email tidak valid"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
 
         binding.btnRegister.setOnClickListener {
             name = binding.edRegisterName.text.toString()
