@@ -10,4 +10,7 @@
     <string name="created_at">Created At</string>
     <string name="detail_story_name">Detail Story Name</string>
     <string name="story_description">Story Description</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="description">Description</string>
 </resources>
