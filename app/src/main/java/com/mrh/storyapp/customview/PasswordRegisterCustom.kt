@@ -40,7 +40,9 @@ class PasswordRegisterCustom : AppCompatEditText {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s!!.length < 8) {
+                if(s.isNullOrEmpty()) {
+                    passwordCustomEditText.error = "Password wajib di isi"
+                } else if(s.length < 8) {
                     passwordCustomEditText.error = "Password harus lebih dari 8 karakter"
                 }
             }
