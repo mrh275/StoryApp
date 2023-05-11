@@ -23,8 +23,8 @@ class ListStoryAdapter(private val activity: Activity) : RecyclerView.Adapter<Li
         this.onItemClickCallback = onItemClickCallback
     }
     class ListViewHolder(view: View) : ViewHolder(view) {
-        val owner: TextView = view.findViewById(R.id.tv_story_owner)
-        val imageUrl: ImageView = view.findViewById(R.id.img_stories)
+        val owner: TextView = view.findViewById(R.id.tv_item_name)
+        val imageUrl: ImageView = view.findViewById(R.id.iv_item_photo)
         val createdAt: TextView = view.findViewById(R.id.tv_created_at)
     }
 
