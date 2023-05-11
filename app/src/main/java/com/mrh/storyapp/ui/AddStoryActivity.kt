@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -30,6 +31,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private lateinit var currentPhotoPath: String
     private lateinit var utils: Utils
+
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -38,6 +40,18 @@ class AddStoryActivity : AppCompatActivity() {
             myFile.let { file ->
                 utils.rotateFile(file)
                 binding.previewImg.setImageBitmap(BitmapFactory.decodeFile(file.path))
+            }
+        }
+    }
+
+    private val launcherIntentGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if(result.resultCode == RESULT_OK) {
+            val selectedImg = result.data?.data as Uri
+            selectedImg.let { uri ->
+                val myFile = utils.uriToFile(uri, this@AddStoryActivity)
+                binding.previewImg.setImageURI(uri)
             }
         }
     }
@@ -63,6 +77,9 @@ class AddStoryActivity : AppCompatActivity() {
 
         binding.btnCamera.setOnClickListener {
             startTakePhoto()
+        }
+        binding.btnGallery.setOnClickListener{
+            startGallery()
         }
     }
 
@@ -113,5 +130,13 @@ class AddStoryActivity : AppCompatActivity() {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             launcherIntentCamera.launch(intent)
         }
+    }
+
+    private fun startGallery() {
+        val intent = Intent()
+        intent.action = ACTION_GET_CONTENT
+        intent.type = "image/*"
+        val chooser = Intent.createChooser(intent, "Choose a Picture")
+        launcherIntentGallery.launch(chooser)
     }
 }
