@@ -2,12 +2,13 @@ package com.mrh.storyapp.data
 
 import android.content.Context
 
-internal class UserPreference(context: Context) {
+class UserPreference(context: Context) {
+
     companion object {
-        private const val PREFS_NAME = "user_prefs"
-        private const val TOKEN = "token"
-        private const val USER_ID = "user_id"
-        private const val NAME = "name"
+        const val PREFS_NAME = "prefs_name"
+        const val TOKEN = "token"
+        const val USER_ID = "user_id"
+        const val NAME = "name"
     }
 
     private val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
