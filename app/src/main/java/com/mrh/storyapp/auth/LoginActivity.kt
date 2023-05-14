@@ -36,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkSession()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         userModel = UserModel()
@@ -93,6 +94,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this@LoginActivity, "Welcome back ${response.body()?.loginResult?.name}", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
+                    finish()
                 } else {
                     showLoading(false)
                     Toast.makeText(this@LoginActivity, "Email atau Kata Sandi salah", Toast.LENGTH_SHORT).show()
@@ -120,5 +122,15 @@ class LoginActivity : AppCompatActivity() {
         userModel.name = name
 
         userPreference.setAuthSession(userModel)
+    }
+
+    private fun checkSession() {
+        val userPreference = UserPreference(this)
+        val preferences = userPreference.getAuthSession()
+        if(!preferences.token.isNullOrEmpty()) {
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
