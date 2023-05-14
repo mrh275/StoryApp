@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if(backPressedTime + 3000 > System.currentTimeMillis()) {
             super.onBackPressed()
-            finishAffinity()
+            finish()
         } else {
             Toast.makeText(this@MainActivity, "Press back again to leave the app", Toast.LENGTH_SHORT).show()
         }
