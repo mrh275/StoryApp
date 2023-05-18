@@ -16,6 +16,13 @@
         <item name="android:textColorSecondary">@color/gray_300</item>
     </style>
 
+    <style name="Base.Theme.MyGoogleMaps" parent="Theme.Material3.DayNight">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.MyGoogleMaps" parent="Base.Theme.MyGoogleMaps" />
+
     <style name="Theme.StoryApp.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
         <!-- Radius of the outer bound of widgets to make the rounded corners -->
         <item name="appWidgetRadius">16dp</item>
