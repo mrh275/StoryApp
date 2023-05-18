@@ -1,6 +1,7 @@
 package com.mrh.storyapp.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
@@ -18,6 +19,8 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.mrh.storyapp.MainActivity
 import com.mrh.storyapp.data.UserPreference
 import com.mrh.storyapp.data.stories.StoryViewModel
@@ -40,6 +43,7 @@ class AddStoryActivity : AppCompatActivity() {
     private var getFile: File? = null
     private val storyViewModel by viewModels<StoryViewModel>()
     private lateinit var userPreference: UserPreference
+    private lateinit var fusedLocattion: FusedLocationProviderClient
 
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -68,7 +72,7 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
         private const val REQUEST_CODE_PERMISSIONS = 10
         private const val MAXIMAL_SIZE = 1000000
     }
@@ -81,6 +85,7 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Add New Story"
         userPreference = UserPreference(this)
+        fusedLocattion = LocationServices.getFusedLocationProviderClient(this)
 
         if(!allPermissionGranted()) {
             ActivityCompat.requestPermissions(
@@ -156,40 +161,83 @@ class AddStoryActivity : AppCompatActivity() {
         launcherIntentGallery.launch(chooser)
     }
 
+    @SuppressLint("MissingPermission")
     private fun uploadImage() {
         showLoading(true)
-        if(getFile == null) {
-            showLoading(false)
-            Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
-        } else if(binding.edAddDescription.text.isNullOrEmpty()){
-            showLoading(false)
-            Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
-        } else {
-            val file = reduceFileImage(getFile as File)
+        if(!binding.cbGetLocation.isChecked) {
+            if(getFile == null) {
+                showLoading(false)
+                Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
+            } else if(binding.edAddDescription.text.isNullOrEmpty()){
+                showLoading(false)
+                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
+            } else {
+                val file = reduceFileImage(getFile as File)
 
-            val description = binding.edAddDescription.text.toString()
-                .toRequestBody("text/plain".toMediaTypeOrNull())
-            val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
-            val imageMultiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
-                file.name,
-                requestImageFile
-            )
-            val userToken = userPreference.getAuthSession().token
-            storyViewModel.addNewStory(imageMultiPart, description, userToken.toString())
-            storyViewModel.getUploadResult().observe(this) {
-                if (!it.error) {
-                    showLoading(false)
-                    Toast.makeText(
-                        this@AddStoryActivity,
-                        "Berhasil menambahkan story",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    showLoading(false)
-                    Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
+                val description = binding.edAddDescription.text.toString()
+                    .toRequestBody("text/plain".toMediaTypeOrNull())
+                val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+                val imageMultiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                    "photo",
+                    file.name,
+                    requestImageFile
+                )
+                val userToken = userPreference.getAuthSession().token
+                storyViewModel.addNewStory(imageMultiPart, description, userToken.toString(), 1.0,1.0)
+                storyViewModel.getUploadResult().observe(this) {
+                    if (!it.error) {
+                        showLoading(false)
+                        Toast.makeText(
+                            this@AddStoryActivity,
+                            "Berhasil menambahkan story",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        showLoading(false)
+                        Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        } else {
+            if(getFile == null) {
+                showLoading(false)
+                Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
+            } else if(binding.edAddDescription.text.isNullOrEmpty()){
+                showLoading(false)
+                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
+            } else {
+                val file = reduceFileImage(getFile as File)
+
+                val description = binding.edAddDescription.text.toString()
+                    .toRequestBody("text/plain".toMediaTypeOrNull())
+                val requestImageFile = file.asRequestBody("image/jpeg".toMediaType())
+                val imageMultiPart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                    "photo",
+                    file.name,
+                    requestImageFile
+                )
+                fusedLocattion.lastLocation.addOnSuccessListener { location ->
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    val userToken = userPreference.getAuthSession().token
+                    storyViewModel.addNewStory(imageMultiPart, description, userToken.toString(), latitude, longitude)
+                    storyViewModel.getUploadResult().observe(this) {
+                        if (!it.error) {
+                            showLoading(false)
+                            Toast.makeText(
+                                this@AddStoryActivity,
+                                "Berhasil menambahkan story",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            showLoading(false)
+                            Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
