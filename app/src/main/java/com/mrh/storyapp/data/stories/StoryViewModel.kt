@@ -54,6 +54,29 @@ class StoryViewModel() : ViewModel() {
         })
     }
 
+    fun getStoriesWithLocation(token: String) {
+        val client =
+            ApiConfig.getApiWithToken(token)
+                .getStoriesWithLocation()
+        client.enqueue(object : Callback<ResponseStories> {
+            override fun onResponse(
+                call: Call<ResponseStories>,
+                response: Response<ResponseStories>
+            ) {
+                if(response.isSuccessful) {
+                    listStory.postValue(response.body()?.listStory)
+                } else {
+                    Log.e(TAG, "onFailure : ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseStories>, t: Throwable) {
+                Log.e(TAG, "onFailure : ${t.message}")
+            }
+
+        })
+    }
+
     fun setDetailStory(id: String, token: String) {
         val client =
             ApiConfig.getApiWithToken(token)
@@ -75,10 +98,10 @@ class StoryViewModel() : ViewModel() {
         })
     }
 
-    fun addNewStory(imageMultiPart: MultipartBody.Part, description: RequestBody, token: String) {
+    fun addNewStory(imageMultiPart: MultipartBody.Part, description: RequestBody, token: String, lat: Double, lon: Double) {
         val client =
             ApiConfig.getApiWithToken(token)
-                .addStory(imageMultiPart, description)
+                .addStory(imageMultiPart, description, lat, lon)
         client.enqueue(object : Callback<FileUploadResponse> {
             override fun onResponse(
                 call: Call<FileUploadResponse>,
