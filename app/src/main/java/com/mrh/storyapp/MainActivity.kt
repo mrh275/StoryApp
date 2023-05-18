@@ -19,6 +19,7 @@ import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityMainBinding
 import com.mrh.storyapp.ui.AddStoryActivity
 import com.mrh.storyapp.ui.DetailStoryActivity
+import com.mrh.storyapp.ui.StoryMapsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,6 +44,9 @@ class MainActivity : AppCompatActivity() {
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvStories.addItemDecoration(itemDecoration)
 
+        val userToken = mUserPreference.getAuthSession().token
+        storyViewModel.findStories(userToken.toString())
+
         storyViewModel.getListStoryObserve().observe(this) { listStory ->
             showLoading(false)
             if(listStory != null) {
@@ -52,8 +56,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
             }
         }
-        val userToken = mUserPreference.getAuthSession().token
-        storyViewModel.findStories(userToken.toString())
 
         adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
             override fun onItemClicked(listStoryItem: ListStoryItem) {
@@ -96,6 +98,10 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId) {
             R.id.action_logout -> {
                 authLogout()
+            }
+            R.id.showMapStory -> {
+                val intent = Intent(this@MainActivity, StoryMapsActivity::class.java)
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
