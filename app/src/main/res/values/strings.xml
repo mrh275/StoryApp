@@ -14,4 +14,7 @@
     <string name="gallery">Gallery</string>
     <string name="description">Description</string>
     <string name="upload">Upload</string>
+    <string name="title_activity_story_maps">StoryMapsActivity</string>
+    <string name="logout">Logout</string>
+    <string name="attach_location">Attach Location</string>
 </resources>
