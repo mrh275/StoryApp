@@ -6,7 +6,7 @@ import com.mrh.storyapp.data.stories.ResponseStories
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
-import  retrofit2.http.*
+import retrofit2.http.*
 
 interface ApiService {
     @FormUrlEncoded
@@ -28,6 +28,9 @@ interface ApiService {
     @GET("stories")
     fun getAllStories() : Call<ResponseStories>
 
+    @GET("stories?location=1")
+    fun getStoriesWithLocation() : Call<ResponseStories>
+
     @GET("stories/{id}")
     fun getDetailStory(
         @Path("id") id :String
@@ -37,6 +40,8 @@ interface ApiService {
     @POST("stories")
     fun addStory(
         @Part file: MultipartBody.Part,
-        @Part("description") description: RequestBody
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Double,
+        @Part("lon") lon: Double
     ): Call<FileUploadResponse>
 }
