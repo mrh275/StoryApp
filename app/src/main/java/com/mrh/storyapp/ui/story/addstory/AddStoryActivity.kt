@@ -187,6 +187,9 @@ class AddStoryActivity : AppCompatActivity() {
                         when(it) {
                             is com.mrh.storyapp.data.Result.Success -> {
                                 showLoading(false)
+                                val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+                                startActivity(intent)
+                                finish()
                                 Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
                             }
                             is com.mrh.storyapp.data.Result.Loading -> {
@@ -199,23 +202,6 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                     }
                 }
-//                val userToken = userPreference.getAuthSession().token
-//                storyViewModel.addNewStory(imageMultiPart, description, this, 1.0,1.0)
-//                storyViewModel.getUploadResult().observe(this) {
-//                    if (!it?.error!!) {
-//                        showLoading(false)
-//                        Toast.makeText(
-//                            this@AddStoryActivity,
-//                            "Berhasil menambahkan story",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-//                        startActivity(intent)
-//                    } else {
-//                        showLoading(false)
-//                        Toast.makeText(this@AddStoryActivity, it?.message, Toast.LENGTH_SHORT).show()
-//                    }
-//                }
             }
         } else {
             if(getFile == null) {
@@ -243,6 +229,9 @@ class AddStoryActivity : AppCompatActivity() {
                             when(it) {
                                 is com.mrh.storyapp.data.Result.Success -> {
                                     showLoading(false)
+                                    val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
                                     Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
                                 }
                                 is com.mrh.storyapp.data.Result.Loading -> {
@@ -255,23 +244,6 @@ class AddStoryActivity : AppCompatActivity() {
                             }
                         }
                     }
-//                    val userToken = userPreference.getAuthSession().token
-//                    storyViewModel.addNewStory(imageMultiPart, description, this, latitude, longitude)
-//                    storyViewModel.getUploadResult().observe(this) {
-//                        if (!it?.error!!) {
-//                            showLoading(false)
-//                            Toast.makeText(
-//                                this@AddStoryActivity,
-//                                "Berhasil menambahkan story",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//                            val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-//                            startActivity(intent)
-//                        } else {
-//                            showLoading(false)
-//                            Toast.makeText(this@AddStoryActivity, it?.message, Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
                 }
             }
         }
