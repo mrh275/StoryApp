@@ -1,6 +1,5 @@
-package com.mrh.storyapp
+package com.mrh.storyapp.ui.story
 
-import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,51 +10,40 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mrh.storyapp.auth.LoginActivity
-import com.mrh.storyapp.data.UserPreference
-import com.mrh.storyapp.data.stories.ListStoryAdapter
+import com.mrh.storyapp.R
+import com.mrh.storyapp.ui.auth.login.LoginActivity
+import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.data.stories.ListStoryItem
-import com.mrh.storyapp.data.stories.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityMainBinding
-import com.mrh.storyapp.ui.AddStoryActivity
-import com.mrh.storyapp.ui.DetailStoryActivity
-import com.mrh.storyapp.ui.StoryMapsActivity
+import com.mrh.storyapp.ui.story.addstory.AddStoryActivity
+import com.mrh.storyapp.ui.story.detail.DetailStoryActivity
+import com.mrh.storyapp.ui.story.maps.StoryMapsActivity
+import com.mrh.storyapp.utils.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
-    private lateinit var mUserPreference: UserPreference
-    private val storyViewModel by viewModels<StoryViewModel>()
+    private val storyViewModel : StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
     private lateinit var adapter: ListStoryAdapter
     private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        mUserPreference = UserPreference(this)
         setContentView(binding.root)
 
         showLoading(true)
         val layoutManager = LinearLayoutManager(this)
         binding.rvStories.layoutManager = layoutManager
-        adapter = ListStoryAdapter(this)
+        adapter = ListStoryAdapter()
         binding.rvStories.adapter = adapter
         binding.rvStories.setHasFixedSize(true)
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         binding.rvStories.addItemDecoration(itemDecoration)
 
-        val userToken = mUserPreference.getAuthSession().token
-        storyViewModel.findStories(userToken.toString())
-
-        storyViewModel.getListStoryObserve().observe(this) { listStory ->
-            showLoading(false)
-            if(listStory != null) {
-                adapter.setListStory(listStory)
-                adapter.notifyDataSetChanged()
-            } else {
-                Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
-            }
-        }
+        getData()
 
         adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
             override fun onItemClicked(listStoryItem: ListStoryItem) {
@@ -72,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         binding.btnAddStory.setOnClickListener {
             val intent = Intent(this@MainActivity, AddStoryActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun getData() {
+        val adapter = ListStoryAdapter()
+        binding.rvStories.adapter = adapter
+        storyViewModel.story.observe(this) {
+            adapter.submitData(lifecycle, it)
         }
     }
 
@@ -108,7 +104,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun authLogout() {
-        mUserPreference.clearAuthSession()
+        UserPreference.clearAuthSession(this)
         val intent = Intent(this@MainActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()
