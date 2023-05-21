@@ -103,27 +103,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
-
-//        val client = ApiConfig.getApiService().register(name, email, password)
-//        client.enqueue(object : Callback<ResponseRegister> {
-//            override fun onResponse(call: Call<ResponseRegister>, response: Response<ResponseRegister>) {
-//                if(response.isSuccessful) {
-//                    showLoading(false)
-//                    Toast.makeText(this@RegisterActivity, "Akun $name berhasil didaftarkan", Toast.LENGTH_SHORT).show()
-//                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                } else {
-//                    showLoading(false)
-//                    Log.e(TAG, "onFailure: ${response.message()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<ResponseRegister>, t: Throwable) {
-//                showLoading(false)
-//                Log.e(TAG, "onFailure: ${t.message}")
-//            }
-//        })
     }
 
     private fun showLoading(isLoading: Boolean) {
