@@ -1,6 +1,8 @@
 package com.mrh.storyapp.api
 
-import com.mrh.storyapp.data.stories.FileUploadResponse
+import com.mrh.storyapp.data.login.ResponseLogin
+import com.mrh.storyapp.data.register.ResponseRegister
+import com.mrh.storyapp.data.stories.ResponseAddStory
 import com.mrh.storyapp.data.stories.ResponseDetailStory
 import com.mrh.storyapp.data.stories.ResponseStories
 import okhttp3.MultipartBody
@@ -11,25 +13,30 @@ import retrofit2.http.*
 interface ApiService {
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<ResponseLogin>
+    ): ResponseLogin
 
     @FormUrlEncoded
     @POST("register")
-    fun register(
+    suspend fun register(
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<ResponseRegister>
+    ): ResponseRegister
 
 
     @GET("stories")
-    fun getAllStories() : Call<ResponseStories>
+    suspend fun getAllStories(
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ) : ResponseStories
 
     @GET("stories?location=1")
-    fun getStoriesWithLocation() : Call<ResponseStories>
+    suspend fun getStoriesWithLocation(
+        @Query("location") location: Int
+    ) : ResponseStories
 
     @GET("stories/{id}")
     fun getDetailStory(
@@ -38,10 +45,10 @@ interface ApiService {
 
     @Multipart
     @POST("stories")
-    fun addStory(
+    suspend fun addStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
         @Part("lat") lat: Double,
         @Part("lon") lon: Double
-    ): Call<FileUploadResponse>
+    ): ResponseAddStory
 }
