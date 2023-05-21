@@ -1,4 +1,4 @@
-package com.mrh.storyapp.api
+package com.mrh.storyapp.data.login
 
 import com.google.gson.annotations.SerializedName
 
