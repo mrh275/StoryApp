@@ -1,7 +1,9 @@
 package com.mrh.storyapp.api
 
+import android.content.Context
 import com.mrh.storyapp.BuildConfig
 import com.mrh.storyapp.auth.OAuthInterceptor
+import com.mrh.storyapp.utils.UserPreference
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,17 +28,15 @@ class ApiConfig {
                 .build()
             return retrofit.create(ApiService::class.java)
         }
-        fun getApiWithToken(token: String): ApiService {
+        fun getApiWithToken(context: Context): ApiService {
+            val token = UserPreference.getAuthSession(context)
             val loggingInterceptor = if(BuildConfig.DEBUG) {
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
             } else {
                 HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
             }
             val client = OkHttpClient.Builder()
-                .addInterceptor(OAuthInterceptor(
-                    "Bearer",
-                    token
-                ))
+                .addInterceptor(OAuthInterceptor("Bearer $token"))
                 .addInterceptor(loggingInterceptor)
                 .build()
             val retrofit = Retrofit.Builder()
