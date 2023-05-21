@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mrh.storyapp.R
 import com.mrh.storyapp.ui.auth.login.LoginActivity
@@ -38,10 +37,6 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvStories.layoutManager = layoutManager
         adapter = ListStoryAdapter()
-        binding.rvStories.adapter = adapter
-        binding.rvStories.setHasFixedSize(true)
-        val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
-        binding.rvStories.addItemDecoration(itemDecoration)
 
         getData()
 
@@ -64,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData() {
-        val adapter = ListStoryAdapter()
+        showLoading(false)
         binding.rvStories.adapter = adapter
         storyViewModel.story.observe(this) {
             adapter.submitData(lifecycle, it)
