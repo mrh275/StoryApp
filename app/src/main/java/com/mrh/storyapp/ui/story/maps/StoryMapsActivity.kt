@@ -1,4 +1,4 @@
-package com.mrh.storyapp.ui
+package com.mrh.storyapp.ui.story.maps
 
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -17,17 +18,19 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.mrh.storyapp.R
-import com.mrh.storyapp.data.UserPreference
-import com.mrh.storyapp.data.stories.StoryViewModel
+import com.mrh.storyapp.data.stories.ListStoryItem
+import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.databinding.ActivityStoryMapsBinding
 import com.mrh.storyapp.utils.CustomInfoWindowGoogleMap
+import com.mrh.storyapp.utils.ViewModelFactory
 
 class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityStoryMapsBinding
-    private lateinit var storyViewModel: StoryViewModel
-    private lateinit var preference: UserPreference
+    private val storyMapViewModel: StoryMapsViewModel by viewModels {
+        ViewModelFactory(this)
+    }
     private val boundsBuilder = LatLngBounds.Builder()
 
     companion object {
@@ -36,10 +39,6 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        storyViewModel = StoryViewModel()
-        preference = UserPreference(this)
-        val userToken = preference.getAuthSession().token
-        storyViewModel.getStoriesWithLocation(userToken.toString())
 
         binding = ActivityStoryMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -67,13 +66,23 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
-        // Add a marker in Sydney and move the camera
-//        val sydney = LatLng(-34.0, 151.0)
-//        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
         setMapStyle()
         getMyLocation()
-        markAllStories()
+        storyMapViewModel.getStoryWithLocation().observe(this) {result ->
+            if(result != null) {
+                when(result) {
+                    is com.mrh.storyapp.data.Result.Success -> {
+                        markAllStories(result.data.listStory)
+                    }
+                    is com.mrh.storyapp.data.Result.Loading -> {
+//                        showLoading
+                    }
+                    is com.mrh.storyapp.data.Result.Error -> {
+                        Toast.makeText(this, result.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun setMapStyle() {
@@ -88,37 +97,31 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun markAllStories() {
-        storyViewModel.getListStoryObserve().observe(this) { listStory ->
-            if(listStory != null) {
-                listStory.forEach { storyPlace ->
-                    val latLng = LatLng(storyPlace.lat as Double, storyPlace.lon as Double)
-                    val customInfoWindow = CustomInfoWindowGoogleMap(this)
-                    mMap.setInfoWindowAdapter(customInfoWindow)
-                    val markerOptions = MarkerOptions()
-                        .position(latLng)
-                        .title(storyPlace.name)
-                        .snippet(storyPlace.description)
+    private fun markAllStories(listStory: List<ListStoryItem>) {
+        listStory.forEach { storyPlace ->
+            val latLng = LatLng(storyPlace.lat, storyPlace.lon)
+            val customInfoWindow = CustomInfoWindowGoogleMap(this)
+            mMap.setInfoWindowAdapter(customInfoWindow)
+            val markerOptions = MarkerOptions()
+                .position(latLng)
+                .title(storyPlace.name)
+                .snippet(storyPlace.description)
 
-                    val marker = mMap.addMarker(markerOptions)
-                    marker?.tag = storyPlace
-                    marker?.showInfoWindow()
-                    boundsBuilder.include(latLng)
-                }
-
-                val bounds: LatLngBounds = boundsBuilder.build()
-                mMap.animateCamera(
-                    CameraUpdateFactory.newLatLngBounds(
-                        bounds,
-                        resources.displayMetrics.widthPixels,
-                        resources.displayMetrics.heightPixels,
-                        300
-                    )
-                )
-            } else {
-                Toast.makeText(this, "Error fetching data", Toast.LENGTH_SHORT).show()
-            }
+            val marker = mMap.addMarker(markerOptions)
+            marker?.tag = storyPlace
+            marker?.showInfoWindow()
+            boundsBuilder.include(latLng)
         }
+
+        val bounds: LatLngBounds = boundsBuilder.build()
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds,
+                resources.displayMetrics.widthPixels,
+                resources.displayMetrics.heightPixels,
+                300
+            )
+        )
     }
 
     private val requestPermissionLaucher =

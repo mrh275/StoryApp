@@ -1,4 +1,4 @@
-package com.mrh.storyapp.ui
+package com.mrh.storyapp.ui.story.detail
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -6,11 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.mrh.storyapp.data.UserPreference
-import com.mrh.storyapp.data.stories.StoryViewModel
+import com.mrh.storyapp.ui.story.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityDetailStoryBinding
+import com.mrh.storyapp.utils.ViewModelFactory
 
 class DetailStoryActivity : AppCompatActivity() {
 
@@ -23,13 +24,14 @@ class DetailStoryActivity : AppCompatActivity() {
 
         private lateinit var binding: ActivityDetailStoryBinding
         private lateinit var viewModel: StoryViewModel
-        private lateinit var userPreference: UserPreference
+        private val storyViewModel: StoryViewModel by viewModels {
+            ViewModelFactory(this)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        userPreference = UserPreference(this)
 
         playAnimation()
 
@@ -41,11 +43,10 @@ class DetailStoryActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
 
-        val userToken = userPreference.getAuthSession().token
         if(id != null) {
-            viewModel.setDetailStory(id, userToken.toString())
+            showLoading(true)
+            storyViewModel.detailStory(id, this)
         }
-        showLoading(true)
         viewModel.getDetailStoryObserve().observe(this) {
             showLoading(false)
             if(it != null) {

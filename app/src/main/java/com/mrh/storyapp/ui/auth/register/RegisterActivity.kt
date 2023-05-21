@@ -1,20 +1,17 @@
-package com.mrh.storyapp.auth
+package com.mrh.storyapp.ui.auth.register
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
-import com.mrh.storyapp.api.ApiConfig
-import com.mrh.storyapp.api.ResponseRegister
+import androidx.activity.viewModels
 import com.mrh.storyapp.databinding.ActivityRegisterBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.mrh.storyapp.ui.auth.login.LoginActivity
+import com.mrh.storyapp.utils.ViewModelFactory
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -22,6 +19,9 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var name: String
     private lateinit var email: String
     private lateinit var password: String
+    private val registerViewModel: RegisterViewModel by viewModels {
+        ViewModelFactory(this)
+    }
 
     companion object {
         private const val TAG = "RegisterActivity"
@@ -79,27 +79,51 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun authRegister(name: String, email: String, password: String) {
-        showLoading(true)
-        val client = ApiConfig.getApiService().register(name, email, password)
-        client.enqueue(object : Callback<ResponseRegister> {
-            override fun onResponse(call: Call<ResponseRegister>, response: Response<ResponseRegister>) {
-                if(response.isSuccessful) {
-                    showLoading(false)
-                    Toast.makeText(this@RegisterActivity, "Akun $name berhasil didaftarkan", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    showLoading(false)
-                    Log.e(TAG, "onFailure: ${response.message()}")
+
+        registerViewModel.register(name, email, password).observe(this) {result ->
+            if(result != null) {
+                when(result) {
+                    is com.mrh.storyapp.data.Result.Loading -> {
+                        showLoading(true)
+                    }
+                    is com.mrh.storyapp.data.Result.Success -> {
+                        showLoading(false)
+                        if(result.data.error) {
+                            Toast.makeText(this, "Registrasi gagal", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(this, "Registrasi berhasil, silahkan login!", Toast.LENGTH_LONG).show()
+                            startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                            finish()
+                        }
+                    }
+                    is com.mrh.storyapp.data.Result.Error -> {
+                        showLoading(false)
+                        Toast.makeText(this, result.error, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
+        }
 
-            override fun onFailure(call: Call<ResponseRegister>, t: Throwable) {
-                showLoading(false)
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-        })
+//        val client = ApiConfig.getApiService().register(name, email, password)
+//        client.enqueue(object : Callback<ResponseRegister> {
+//            override fun onResponse(call: Call<ResponseRegister>, response: Response<ResponseRegister>) {
+//                if(response.isSuccessful) {
+//                    showLoading(false)
+//                    Toast.makeText(this@RegisterActivity, "Akun $name berhasil didaftarkan", Toast.LENGTH_SHORT).show()
+//                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                } else {
+//                    showLoading(false)
+//                    Log.e(TAG, "onFailure: ${response.message()}")
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseRegister>, t: Throwable) {
+//                showLoading(false)
+//                Log.e(TAG, "onFailure: ${t.message}")
+//            }
+//        })
     }
 
     private fun showLoading(isLoading: Boolean) {
