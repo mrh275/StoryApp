@@ -1,4 +1,4 @@
-package com.mrh.storyapp.ui
+package com.mrh.storyapp.ui.story.addstory
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -21,11 +21,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mrh.storyapp.MainActivity
-import com.mrh.storyapp.data.UserPreference
-import com.mrh.storyapp.data.stories.StoryViewModel
+import com.mrh.storyapp.ui.story.MainActivity
+import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.databinding.ActivityAddStoryBinding
 import com.mrh.storyapp.utils.Utils
+import com.mrh.storyapp.utils.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -41,8 +41,9 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var currentPhotoPath: String
     private lateinit var utils: Utils
     private var getFile: File? = null
-    private val storyViewModel by viewModels<StoryViewModel>()
-    private lateinit var userPreference: UserPreference
+    private val addStoryViewModel: AddStoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
     private lateinit var fusedLocattion: FusedLocationProviderClient
 
     private val launcherIntentCamera = registerForActivityResult(
@@ -84,7 +85,6 @@ class AddStoryActivity : AppCompatActivity() {
         utils = Utils()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Add New Story"
-        userPreference = UserPreference(this)
         fusedLocattion = LocationServices.getFusedLocationProviderClient(this)
 
         if(!allPermissionGranted()) {
@@ -182,23 +182,40 @@ class AddStoryActivity : AppCompatActivity() {
                     file.name,
                     requestImageFile
                 )
-                val userToken = userPreference.getAuthSession().token
-                storyViewModel.addNewStory(imageMultiPart, description, userToken.toString(), 1.0,1.0)
-                storyViewModel.getUploadResult().observe(this) {
-                    if (!it.error) {
-                        showLoading(false)
-                        Toast.makeText(
-                            this@AddStoryActivity,
-                            "Berhasil menambahkan story",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        showLoading(false)
-                        Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
+                addStoryViewModel.addNewStory(imageMultiPart, description, 1.0, 1.0).observe(this) {
+                    if(it != null) {
+                        when(it) {
+                            is com.mrh.storyapp.data.Result.Success -> {
+                                showLoading(false)
+                                Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
+                            }
+                            is com.mrh.storyapp.data.Result.Loading -> {
+                                showLoading(true)
+                            }
+                            is com.mrh.storyapp.data.Result.Error -> {
+                                showLoading(false)
+                                Toast.makeText(applicationContext, it.error, Toast.LENGTH_LONG).show()
+                            }
+                        }
                     }
                 }
+//                val userToken = userPreference.getAuthSession().token
+//                storyViewModel.addNewStory(imageMultiPart, description, this, 1.0,1.0)
+//                storyViewModel.getUploadResult().observe(this) {
+//                    if (!it?.error!!) {
+//                        showLoading(false)
+//                        Toast.makeText(
+//                            this@AddStoryActivity,
+//                            "Berhasil menambahkan story",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                        val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+//                        startActivity(intent)
+//                    } else {
+//                        showLoading(false)
+//                        Toast.makeText(this@AddStoryActivity, it?.message, Toast.LENGTH_SHORT).show()
+//                    }
+//                }
             }
         } else {
             if(getFile == null) {
@@ -221,23 +238,40 @@ class AddStoryActivity : AppCompatActivity() {
                 fusedLocattion.lastLocation.addOnSuccessListener { location ->
                     val latitude = location.latitude
                     val longitude = location.longitude
-                    val userToken = userPreference.getAuthSession().token
-                    storyViewModel.addNewStory(imageMultiPart, description, userToken.toString(), latitude, longitude)
-                    storyViewModel.getUploadResult().observe(this) {
-                        if (!it.error) {
-                            showLoading(false)
-                            Toast.makeText(
-                                this@AddStoryActivity,
-                                "Berhasil menambahkan story",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            showLoading(false)
-                            Toast.makeText(this@AddStoryActivity, it.message, Toast.LENGTH_SHORT).show()
+                    addStoryViewModel.addNewStory(imageMultiPart, description, latitude, longitude).observe(this) {
+                        if(it != null) {
+                            when(it) {
+                                is com.mrh.storyapp.data.Result.Success -> {
+                                    showLoading(false)
+                                    Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
+                                }
+                                is com.mrh.storyapp.data.Result.Loading -> {
+                                    showLoading(true)
+                                }
+                                is com.mrh.storyapp.data.Result.Error -> {
+                                    showLoading(false)
+                                    Toast.makeText(applicationContext, it.error, Toast.LENGTH_LONG).show()
+                                }
+                            }
                         }
                     }
+//                    val userToken = userPreference.getAuthSession().token
+//                    storyViewModel.addNewStory(imageMultiPart, description, this, latitude, longitude)
+//                    storyViewModel.getUploadResult().observe(this) {
+//                        if (!it?.error!!) {
+//                            showLoading(false)
+//                            Toast.makeText(
+//                                this@AddStoryActivity,
+//                                "Berhasil menambahkan story",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                            val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
+//                            startActivity(intent)
+//                        } else {
+//                            showLoading(false)
+//                            Toast.makeText(this@AddStoryActivity, it?.message, Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
                 }
             }
         }
