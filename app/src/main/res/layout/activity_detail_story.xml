@@ -7,7 +7,7 @@
     android:paddingTop="16dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    tools:context=".ui.DetailStoryActivity">
+    tools:context=".ui.story.detail.DetailStoryActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
