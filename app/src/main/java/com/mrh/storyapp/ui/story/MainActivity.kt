@@ -60,7 +60,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun getData() {
         showLoading(false)
-        binding.rvStories.adapter = adapter
+        binding.rvStories.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
         storyViewModel.story.observe(this) {
             adapter.submitData(lifecycle, it)
         }
