@@ -1,5 +1,6 @@
 package com.mrh.storyapp.ui.story
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -10,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.mrh.storyapp.R
 import com.mrh.storyapp.data.stories.ListStoryItem
 import com.mrh.storyapp.databinding.ItemRowStoriesBinding
+import com.mrh.storyapp.ui.story.detail.DetailStoryActivity
 
 class ListStoryAdapter : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListViewHolder>(
     DIFF_CALLBACK
@@ -45,7 +47,14 @@ class ListStoryAdapter : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListV
             binding.tvCreatedAt.text = data.createdAt
             binding.cvStories.startAnimation(AnimationUtils.loadAnimation(binding.cvStories.context, R.anim.grow_appear))
             binding.root.setOnClickListener {
-
+                val intent = Intent(it.context, DetailStoryActivity::class.java)
+                    .also { detail ->
+                        detail.putExtra(DetailStoryActivity.EXTRA_ID, data.id)
+                        detail.putExtra(DetailStoryActivity.EXTRA_NAME, data.name)
+                        detail.putExtra(DetailStoryActivity.EXTRA_DESCRIPTION, data.description)
+                        detail.putExtra(DetailStoryActivity.EXTRA_PHOTOURL, data.photoUrl)
+                    }
+                itemView.context.startActivity(intent)
             }
         }
     }

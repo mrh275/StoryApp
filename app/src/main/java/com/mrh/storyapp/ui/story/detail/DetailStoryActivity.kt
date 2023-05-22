@@ -22,11 +22,10 @@ class DetailStoryActivity : AppCompatActivity() {
         const val EXTRA_ID = "extra_id"
     }
 
-        private lateinit var binding: ActivityDetailStoryBinding
-        private lateinit var viewModel: StoryViewModel
-        private val storyViewModel: StoryViewModel by viewModels {
-            ViewModelFactory(this)
-        }
+    private lateinit var binding: ActivityDetailStoryBinding
+    private val storyViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +40,11 @@ class DetailStoryActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[StoryViewModel::class.java]
-
         if(id != null) {
             showLoading(true)
             storyViewModel.detailStory(id, this)
         }
-        viewModel.getDetailStoryObserve().observe(this) {
+        storyViewModel.getDetailStoryObserve().observe(this) {
             showLoading(false)
             if(it != null) {
                 binding.apply {
