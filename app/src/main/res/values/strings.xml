@@ -17,4 +17,6 @@
     <string name="title_activity_story_maps">StoryMapsActivity</string>
     <string name="logout">Logout</string>
     <string name="attach_location">Attach Location</string>
+    <string name="try_again">Try Again</string>
+    <string name="timeout">Reached Timeout</string>
 </resources>
