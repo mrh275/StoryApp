@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkSession() {
         val token = UserPreference.getAuthSession(this)
-        if(token.isNotEmpty()) {
+        if(token.isNotBlank()) {
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
