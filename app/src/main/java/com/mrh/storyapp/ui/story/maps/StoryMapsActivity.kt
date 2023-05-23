@@ -99,7 +99,7 @@ class StoryMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun markAllStories(listStory: List<ListStoryItem>) {
         listStory.forEach { storyPlace ->
-            val latLng = LatLng(storyPlace.lat, storyPlace.lon)
+            val latLng = LatLng(storyPlace.lat!!, storyPlace.lon)
             val customInfoWindow = CustomInfoWindowGoogleMap(this)
             mMap.setInfoWindowAdapter(customInfoWindow)
             val markerOptions = MarkerOptions()
