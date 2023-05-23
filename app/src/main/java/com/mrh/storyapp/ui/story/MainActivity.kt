@@ -1,28 +1,28 @@
 package com.mrh.storyapp.ui.story
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mrh.storyapp.R
-import com.mrh.storyapp.ui.auth.login.LoginActivity
-import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.data.stories.ListStoryItem
 import com.mrh.storyapp.databinding.ActivityMainBinding
+import com.mrh.storyapp.ui.auth.login.LoginActivity
 import com.mrh.storyapp.ui.story.addstory.AddStoryActivity
 import com.mrh.storyapp.ui.story.detail.DetailStoryActivity
 import com.mrh.storyapp.ui.story.maps.StoryMapsActivity
+import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.utils.ViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding
-    private val storyViewModel : StoryViewModel by viewModels {
+    private lateinit var binding: ActivityMainBinding
+    private val storyViewModel: StoryViewModel by viewModels {
         ViewModelFactory(this)
     }
     private lateinit var adapter: ListStoryAdapter
@@ -71,17 +71,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(backPressedTime + 3000 > System.currentTimeMillis()) {
+        if (backPressedTime + 3000 > System.currentTimeMillis()) {
             super.onBackPressed()
             finish()
         } else {
-            Toast.makeText(this@MainActivity, "Press back again to leave the app", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@MainActivity,
+                "Press back again to leave the app",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         backPressedTime = System.currentTimeMillis()
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -90,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_logout -> {
                 authLogout()
             }

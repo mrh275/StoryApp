@@ -12,7 +12,10 @@ import com.mrh.storyapp.database.StoryDatabase
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class StoryRepository(private val storyDatabase: StoryDatabase, private val apiService: ApiService) {
+class StoryRepository(
+    private val storyDatabase: StoryDatabase,
+    private val apiService: ApiService
+) {
     fun getStory(): LiveData<PagingData<ListStoryItem>> {
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
@@ -37,7 +40,12 @@ class StoryRepository(private val storyDatabase: StoryDatabase, private val apiS
         }
     }
 
-    fun addStory(imageMultiPart: MultipartBody.Part, description: RequestBody, lat: Double, lon: Double): LiveData<com.mrh.storyapp.data.Result<ResponseAddStory>> = liveData {
+    fun addStory(
+        imageMultiPart: MultipartBody.Part,
+        description: RequestBody,
+        lat: Double,
+        lon: Double
+    ): LiveData<com.mrh.storyapp.data.Result<ResponseAddStory>> = liveData {
         emit(com.mrh.storyapp.data.Result.Loading)
         try {
             val response = apiService.addStory(imageMultiPart, description, lat, lon)
@@ -48,7 +56,10 @@ class StoryRepository(private val storyDatabase: StoryDatabase, private val apiS
         }
     }
 
-    fun login(email: String, password: String): LiveData<com.mrh.storyapp.data.Result<ResponseLogin>> = liveData {
+    fun login(
+        email: String,
+        password: String
+    ): LiveData<com.mrh.storyapp.data.Result<ResponseLogin>> = liveData {
         emit(com.mrh.storyapp.data.Result.Loading)
         try {
             val response = apiService.login(email, password)
@@ -59,7 +70,11 @@ class StoryRepository(private val storyDatabase: StoryDatabase, private val apiS
         }
     }
 
-    fun register(name: String, email: String, password: String): LiveData<com.mrh.storyapp.data.Result<ResponseRegister>> = liveData {
+    fun register(
+        name: String,
+        email: String,
+        password: String
+    ): LiveData<com.mrh.storyapp.data.Result<ResponseRegister>> = liveData {
         emit(com.mrh.storyapp.data.Result.Loading)
         try {
             val response = apiService.register(name, email, password)

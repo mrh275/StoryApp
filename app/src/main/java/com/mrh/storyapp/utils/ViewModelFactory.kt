@@ -3,10 +3,10 @@ package com.mrh.storyapp.utils
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.mrh.storyapp.ui.story.StoryViewModel
 import com.mrh.storyapp.di.Injection
 import com.mrh.storyapp.ui.auth.login.LoginViewModel
 import com.mrh.storyapp.ui.auth.register.RegisterViewModel
+import com.mrh.storyapp.ui.story.StoryViewModel
 import com.mrh.storyapp.ui.story.addstory.AddStoryViewModel
 import com.mrh.storyapp.ui.story.maps.StoryMapsViewModel
 

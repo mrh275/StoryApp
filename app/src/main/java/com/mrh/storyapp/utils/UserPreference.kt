@@ -5,10 +5,10 @@ import android.content.SharedPreferences
 
 object UserPreference {
 
-        private const val PREFS_NAME = "prefs_name"
-        private const val TOKEN = "token"
+    private const val PREFS_NAME = "prefs_name"
+    private const val TOKEN = "token"
 
-    private fun initPreference(context: Context) : SharedPreferences {
+    private fun initPreference(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
@@ -23,7 +23,7 @@ object UserPreference {
         return initPreference(context).getString("token", "").toString()
     }
 
-    fun clearAuthSession(context: Context){
+    fun clearAuthSession(context: Context) {
         val editor = initPreference(context).edit()
         editor.clear()
         editor.apply()

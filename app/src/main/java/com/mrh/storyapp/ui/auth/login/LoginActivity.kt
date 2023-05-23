@@ -1,7 +1,6 @@
 package com.mrh.storyapp.ui.auth.login
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,15 +8,16 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.mrh.storyapp.ui.story.MainActivity
-import com.mrh.storyapp.ui.auth.register.RegisterActivity
-import com.mrh.storyapp.utils.UserPreference
+import androidx.appcompat.app.AppCompatActivity
 import com.mrh.storyapp.databinding.ActivityLoginBinding
+import com.mrh.storyapp.ui.auth.register.RegisterActivity
+import com.mrh.storyapp.ui.story.MainActivity
+import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.utils.ViewModelFactory
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityLoginBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var email: String
     private lateinit var password: String
     private var backPressedTime: Long = 0
@@ -36,9 +36,9 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s.isNullOrEmpty()) {
+                if (s.isNullOrEmpty()) {
                     binding.edLoginEmail.error = "Email tidak boleh kosong"
-                } else if(!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
                     binding.edLoginEmail.error = "Email tidak valid"
                 }
             }
@@ -61,25 +61,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(backPressedTime + 3000 > System.currentTimeMillis()) {
+        if (backPressedTime + 3000 > System.currentTimeMillis()) {
             super.onBackPressed()
             finishAffinity()
         } else {
-            Toast.makeText(this@LoginActivity, "Press back again to leave the app", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@LoginActivity,
+                "Press back again to leave the app",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         backPressedTime = System.currentTimeMillis()
     }
 
     private fun authLogin(email: String, password: String) {
         loginViewModel.login(email, password).observe(this) { result ->
-            if(result != null) {
-                when(result) {
+            if (result != null) {
+                when (result) {
                     is com.mrh.storyapp.data.Result.Loading -> {
                         showLoading(true)
                     }
                     is com.mrh.storyapp.data.Result.Success -> {
                         showLoading(false)
-                        if(result.data.error) {
+                        if (result.data.error) {
                             Toast.makeText(this, result.data.message, Toast.LENGTH_LONG).show()
                         } else {
                             UserPreference.setAuthSession(result.data.loginResult.token, this)
@@ -97,12 +101,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun checkSession() {
         val token = UserPreference.getAuthSession(this)
-        if(token.isNotBlank()) {
+        if (token.isNotBlank()) {
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
             finish()

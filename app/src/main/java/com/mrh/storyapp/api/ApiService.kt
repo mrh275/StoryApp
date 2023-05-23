@@ -31,16 +31,16 @@ interface ApiService {
     suspend fun getAllStories(
         @Query("page") page: Int,
         @Query("size") size: Int
-    ) : ResponseStories
+    ): ResponseStories
 
     @GET("stories?location=1")
     suspend fun getStoriesWithLocation(
         @Query("location") location: Int
-    ) : ResponseStories
+    ): ResponseStories
 
     @GET("stories/{id}")
     fun getDetailStory(
-        @Path("id") id :String
+        @Path("id") id: String
     ): Call<ResponseDetailStory>
 
     @Multipart

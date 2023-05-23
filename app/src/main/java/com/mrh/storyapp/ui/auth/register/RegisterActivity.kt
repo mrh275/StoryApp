@@ -1,7 +1,6 @@
 package com.mrh.storyapp.ui.auth.register
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +8,7 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.mrh.storyapp.databinding.ActivityRegisterBinding
 import com.mrh.storyapp.ui.auth.login.LoginActivity
 import com.mrh.storyapp.utils.ViewModelFactory
@@ -37,9 +37,9 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s.isNullOrEmpty()) {
+                if (s.isNullOrEmpty()) {
                     binding.edRegisterName.error = "Nama tidak boleh kosong"
-                } else if(s.length < 3) {
+                } else if (s.length < 3) {
                     binding.edRegisterName.error = "Nama minimal 3 karakter"
                 }
             }
@@ -53,9 +53,9 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s.isNullOrEmpty()) {
+                if (s.isNullOrEmpty()) {
                     binding.edRegisterEmail.error = "Email tidak boleh kosong"
-                } else if(!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
                     binding.edRegisterEmail.error = "Email tidak valid"
                 }
             }
@@ -80,18 +80,22 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun authRegister(name: String, email: String, password: String) {
 
-        registerViewModel.register(name, email, password).observe(this) {result ->
-            if(result != null) {
-                when(result) {
+        registerViewModel.register(name, email, password).observe(this) { result ->
+            if (result != null) {
+                when (result) {
                     is com.mrh.storyapp.data.Result.Loading -> {
                         showLoading(true)
                     }
                     is com.mrh.storyapp.data.Result.Success -> {
                         showLoading(false)
-                        if(result.data.error) {
+                        if (result.data.error) {
                             Toast.makeText(this, "Registrasi gagal", Toast.LENGTH_LONG).show()
                         } else {
-                            Toast.makeText(this, "Registrasi berhasil, silahkan login!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                this,
+                                "Registrasi berhasil, silahkan login!",
+                                Toast.LENGTH_LONG
+                            ).show()
                             startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
                             finish()
                         }
@@ -106,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
 

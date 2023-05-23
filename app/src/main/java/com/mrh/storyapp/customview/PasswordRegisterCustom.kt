@@ -17,10 +17,16 @@ class PasswordRegisterCustom : AppCompatEditText {
     constructor(context: Context) : super(context) {
         init()
     }
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
     }
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -40,9 +46,9 @@ class PasswordRegisterCustom : AppCompatEditText {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(s.isNullOrEmpty()) {
+                if (s.isNullOrEmpty()) {
                     passwordCustomEditText.error = "Password wajib di isi"
-                } else if(s.length < 8) {
+                } else if (s.length < 8) {
                     passwordCustomEditText.error = "Password harus lebih dari 8 karakter"
                 }
             }

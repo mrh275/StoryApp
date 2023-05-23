@@ -11,7 +11,7 @@ import com.mrh.storyapp.data.stories.ListStoryItem
     version = 2,
     exportSchema = false
 )
-abstract class StoryDatabase: RoomDatabase() {
+abstract class StoryDatabase : RoomDatabase() {
 
     abstract fun storyDao(): StoryDao
     abstract fun remoteKeysDao(): RemoteKeysDao

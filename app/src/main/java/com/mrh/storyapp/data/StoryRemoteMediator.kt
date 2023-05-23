@@ -9,7 +9,6 @@ import com.mrh.storyapp.api.ApiService
 import com.mrh.storyapp.data.stories.ListStoryItem
 import com.mrh.storyapp.database.RemoteKeys
 import com.mrh.storyapp.database.StoryDatabase
-import okhttp3.internal.ignoreIoExceptions
 
 @OptIn(ExperimentalPagingApi::class)
 class StoryRemoteMediator(
@@ -53,12 +52,12 @@ class StoryRemoteMediator(
             val endOfPaginationReached = responseData.listStory.isEmpty()
 
             database.withTransaction {
-                if(loadType == LoadType.REFRESH) {
+                if (loadType == LoadType.REFRESH) {
                     database.remoteKeysDao().deleteRemoteKeys()
                     database.storyDao().deleteAll()
                 }
-                val prevKey = if(page == 1) null else page - 1
-                val nextKey = if(endOfPaginationReached) null else page + 1
+                val prevKey = if (page == 1) null else page - 1
+                val nextKey = if (endOfPaginationReached) null else page + 1
                 val keys = responseData.listStory.map {
                     RemoteKeys(id = it.id, prevKey = prevKey, nextKey = nextKey)
                 }
@@ -71,19 +70,19 @@ class StoryRemoteMediator(
         }
     }
 
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, ListStoryItem>) : RemoteKeys? {
-        return state.pages.lastOrNull {it.data.isNotEmpty()}?.data?.lastOrNull()?.let { data ->
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, ListStoryItem>): RemoteKeys? {
+        return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { data ->
             database.remoteKeysDao().getRemoteKeysId(data.id)
         }
     }
 
-    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, ListStoryItem>) : RemoteKeys? {
-        return state.pages.firstOrNull {it.data.isNotEmpty()}?.data?.firstOrNull()?.let { data ->
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, ListStoryItem>): RemoteKeys? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { data ->
             database.remoteKeysDao().getRemoteKeysId(data.id)
         }
     }
 
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, ListStoryItem>) : RemoteKeys? {
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, ListStoryItem>): RemoteKeys? {
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.id?.let { id ->
                 database.remoteKeysDao().getRemoteKeysId(id)

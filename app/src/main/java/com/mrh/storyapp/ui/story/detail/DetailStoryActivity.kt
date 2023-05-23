@@ -2,15 +2,14 @@ package com.mrh.storyapp.ui.story.detail
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.mrh.storyapp.ui.story.StoryViewModel
 import com.mrh.storyapp.databinding.ActivityDetailStoryBinding
+import com.mrh.storyapp.ui.story.StoryViewModel
 import com.mrh.storyapp.utils.ViewModelFactory
 
 class DetailStoryActivity : AppCompatActivity() {
@@ -40,13 +39,13 @@ class DetailStoryActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if(id != null) {
+        if (id != null) {
             showLoading(true)
             storyViewModel.detailStory(id, this)
         }
         storyViewModel.getDetailStoryObserve().observe(this) {
             showLoading(false)
-            if(it != null) {
+            if (it != null) {
                 binding.apply {
                     tvDetailName.text = it.story.name
                     tvDetailDescription.text = it.story.description
@@ -60,9 +59,14 @@ class DetailStoryActivity : AppCompatActivity() {
     }
 
     private fun playAnimation() {
-        val imageStory = ObjectAnimator.ofFloat(binding.ivDetailPhoto, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
-        val ownerStory = ObjectAnimator.ofFloat(binding.tvDetailName, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
-        val descStory = ObjectAnimator.ofFloat(binding.tvDetailDescription, View.TRANSLATION_X, 1000f, 0f).setDuration(300)
+        val imageStory =
+            ObjectAnimator.ofFloat(binding.ivDetailPhoto, View.TRANSLATION_X, 1000f, 0f)
+                .setDuration(300)
+        val ownerStory = ObjectAnimator.ofFloat(binding.tvDetailName, View.TRANSLATION_X, 1000f, 0f)
+            .setDuration(300)
+        val descStory =
+            ObjectAnimator.ofFloat(binding.tvDetailDescription, View.TRANSLATION_X, 1000f, 0f)
+                .setDuration(300)
 
         AnimatorSet().apply {
             playSequentially(imageStory, ownerStory, descStory)
@@ -80,6 +84,6 @@ class DetailStoryActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

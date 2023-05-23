@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
@@ -16,14 +15,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.mrh.storyapp.ui.story.MainActivity
-import com.mrh.storyapp.utils.UserPreference
 import com.mrh.storyapp.databinding.ActivityAddStoryBinding
+import com.mrh.storyapp.ui.story.MainActivity
 import com.mrh.storyapp.utils.Utils
 import com.mrh.storyapp.utils.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaType
@@ -49,7 +48,7 @@ class AddStoryActivity : AppCompatActivity() {
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if(it.resultCode == RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             val myFile = File(currentPhotoPath)
             myFile.let { file ->
                 utils.rotateFile(file, true)
@@ -62,7 +61,7 @@ class AddStoryActivity : AppCompatActivity() {
     private val launcherIntentGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if(result.resultCode == RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val selectedImg = result.data?.data as Uri
             selectedImg.let { uri ->
                 val myFile = utils.uriToFile(uri, this@AddStoryActivity)
@@ -73,7 +72,8 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
+        private val REQUIRED_PERMISSIONS =
+            arrayOf(Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION)
         private const val REQUEST_CODE_PERMISSIONS = 10
         private const val MAXIMAL_SIZE = 1000000
     }
@@ -87,7 +87,7 @@ class AddStoryActivity : AppCompatActivity() {
         supportActionBar?.title = "Add New Story"
         fusedLocattion = LocationServices.getFusedLocationProviderClient(this)
 
-        if(!allPermissionGranted()) {
+        if (!allPermissionGranted()) {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
@@ -96,7 +96,7 @@ class AddStoryActivity : AppCompatActivity() {
         binding.btnCamera.setOnClickListener {
             startTakePhoto()
         }
-        binding.btnGallery.setOnClickListener{
+        binding.btnGallery.setOnClickListener {
             startGallery()
         }
         binding.buttonAdd.setOnClickListener {
@@ -110,9 +110,13 @@ class AddStoryActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == REQUEST_CODE_PERMISSIONS) {
-            if(!allPermissionGranted()) {
-                Toast.makeText(this@AddStoryActivity, "Tidak mendapatkan permission", Toast.LENGTH_SHORT).show()
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (!allPermissionGranted()) {
+                Toast.makeText(
+                    this@AddStoryActivity,
+                    "Tidak mendapatkan permission",
+                    Toast.LENGTH_SHORT
+                ).show()
                 finish()
             }
         }
@@ -137,6 +141,7 @@ class AddStoryActivity : AppCompatActivity() {
     private fun allPermissionGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
+
     private fun startTakePhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
@@ -164,13 +169,18 @@ class AddStoryActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun uploadImage() {
         showLoading(true)
-        if(!binding.cbGetLocation.isChecked) {
-            if(getFile == null) {
+        if (!binding.cbGetLocation.isChecked) {
+            if (getFile == null) {
                 showLoading(false)
-                Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
-            } else if(binding.edAddDescription.text.isNullOrEmpty()){
+                Toast.makeText(
+                    this@AddStoryActivity,
+                    "Silahkan pilih gambar terlebih dahulu",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (binding.edAddDescription.text.isNullOrEmpty()) {
                 showLoading(false)
-                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 val file = reduceFileImage(getFile as File)
 
@@ -183,33 +193,43 @@ class AddStoryActivity : AppCompatActivity() {
                     requestImageFile
                 )
                 addStoryViewModel.addNewStory(imageMultiPart, description, 1.0, 1.0).observe(this) {
-                    if(it != null) {
-                        when(it) {
+                    if (it != null) {
+                        when (it) {
                             is com.mrh.storyapp.data.Result.Success -> {
                                 showLoading(false)
                                 val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()
-                                Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    it.data.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                             is com.mrh.storyapp.data.Result.Loading -> {
                                 showLoading(true)
                             }
                             is com.mrh.storyapp.data.Result.Error -> {
                                 showLoading(false)
-                                Toast.makeText(applicationContext, it.error, Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, it.error, Toast.LENGTH_LONG)
+                                    .show()
                             }
                         }
                     }
                 }
             }
         } else {
-            if(getFile == null) {
+            if (getFile == null) {
                 showLoading(false)
-                Toast.makeText(this@AddStoryActivity, "Silahkan pilih gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
-            } else if(binding.edAddDescription.text.isNullOrEmpty()){
+                Toast.makeText(
+                    this@AddStoryActivity,
+                    "Silahkan pilih gambar terlebih dahulu",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (binding.edAddDescription.text.isNullOrEmpty()) {
                 showLoading(false)
-                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AddStoryActivity, "Deskripsi wajib di isi", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 val file = reduceFileImage(getFile as File)
 
@@ -224,26 +244,36 @@ class AddStoryActivity : AppCompatActivity() {
                 fusedLocattion.lastLocation.addOnSuccessListener { location ->
                     val latitude = location.latitude
                     val longitude = location.longitude
-                    addStoryViewModel.addNewStory(imageMultiPart, description, latitude, longitude).observe(this) {
-                        if(it != null) {
-                            when(it) {
-                                is com.mrh.storyapp.data.Result.Success -> {
-                                    showLoading(false)
-                                    val intent = Intent(this@AddStoryActivity, MainActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                    Toast.makeText(applicationContext, it.data.message, Toast.LENGTH_LONG).show()
-                                }
-                                is com.mrh.storyapp.data.Result.Loading -> {
-                                    showLoading(true)
-                                }
-                                is com.mrh.storyapp.data.Result.Error -> {
-                                    showLoading(false)
-                                    Toast.makeText(applicationContext, it.error, Toast.LENGTH_LONG).show()
+                    addStoryViewModel.addNewStory(imageMultiPart, description, latitude, longitude)
+                        .observe(this) {
+                            if (it != null) {
+                                when (it) {
+                                    is com.mrh.storyapp.data.Result.Success -> {
+                                        showLoading(false)
+                                        val intent =
+                                            Intent(this@AddStoryActivity, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(
+                                            applicationContext,
+                                            it.data.message,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    is com.mrh.storyapp.data.Result.Loading -> {
+                                        showLoading(true)
+                                    }
+                                    is com.mrh.storyapp.data.Result.Error -> {
+                                        showLoading(false)
+                                        Toast.makeText(
+                                            applicationContext,
+                                            it.error,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 }
                             }
                         }
-                    }
                 }
             }
         }
@@ -265,6 +295,6 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if(isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
