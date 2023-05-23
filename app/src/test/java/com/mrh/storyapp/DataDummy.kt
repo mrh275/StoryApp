@@ -21,4 +21,9 @@ object DataDummy {
         }
         return items
     }
+
+    fun generateDummyStoryNull(): List<ListStoryItem> {
+        val items: MutableList<ListStoryItem> = arrayListOf()
+        return items
+    }
 }
