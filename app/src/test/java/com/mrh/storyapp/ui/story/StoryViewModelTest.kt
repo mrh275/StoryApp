@@ -37,7 +37,7 @@ class StoryViewModelTest {
     private lateinit var storyRepository: StoryRepository
 
     @Test
-    fun `when Get Story Not Null and Return Data`() = runTest {
+    fun `when Get Story Should Not Null and Return Data`() = runTest {
         val dummyStory = DataDummy.generateDummyStoryResponse()
         val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStory)
         val expectedStory = MutableLiveData<PagingData<ListStoryItem>>()
@@ -57,6 +57,28 @@ class StoryViewModelTest {
         assertNotNull(differ.snapshot())
         assertEquals(dummyStory.size, differ.snapshot().size)
         assertEquals(dummyStory[0], differ.snapshot()[0])
+    }
+
+    @Test
+    fun `when Get Story is No Data`() = runTest {
+        val dummyStory = DataDummy.generateDummyStoryNull()
+        val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStory)
+        val expectedStory = MutableLiveData<PagingData<ListStoryItem>>()
+        expectedStory.value = data
+        Mockito.`when`(storyRepository.getStory()).thenReturn(expectedStory)
+
+        val storyViewModel = StoryViewModel(storyRepository)
+        val actualStory: PagingData<ListStoryItem> = storyViewModel.story.getOrAwaitValue()
+
+        val differ = AsyncPagingDataDiffer(
+            diffCallback = ListStoryAdapter.DIFF_CALLBACK,
+            updateCallback = noopListUpdateCallback,
+            workerDispatcher = Dispatchers.Main
+        )
+        differ.submitData(actualStory)
+
+        assertNotNull(differ.snapshot())
+        assertEquals(dummyStory.size, differ.snapshot().size)
     }
 }
 
