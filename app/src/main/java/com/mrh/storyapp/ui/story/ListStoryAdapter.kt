@@ -76,19 +76,6 @@ class ListStoryAdapter : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListV
         if(data != null) {
             holder.bind(data)
         }
-//        holder.itemView.setOnClickListener {
-//            onItemClickCallback.onItemClicked(liststory?.get(holder.adapterPosition)!!)
-//        }
     }
 
-//    override fun getItemCount(): Int {
-//        return if(liststory == null) 0
-//        else liststory?.size!!
-//    }
-
-//    private var liststory: List<ListStoryItem>? = null
-
-//    fun setListStory(listStory: List<ListStoryItem>?) {
-//        liststory = listStory
-//    }
 }
